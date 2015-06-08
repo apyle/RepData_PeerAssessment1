@@ -10,18 +10,45 @@ output:
 
 Load the data downloaded from the GitHub repo
 
+1. Load the data (i.e. read.csv())
 ```{r}
 df <- read.csv("activity.csv", head=TRUE)
-summary(df)
+#summary(df)
+```
+
+2. Process/transform the data (if necessary) into a format suitable for your analysis
+```{r}
+library(dplyr)
+by_day <- group_by(df, date)
+day_step_by_int <- summarize(by_day, total_int = sum(steps, na.rm=T))
 ```
 
 ## What is mean total number of steps taken per day?
 
+1. Calculate the total number of steps taken per day 
 
+```{r}
+b <- day_step_by_int[,2]
+b
+```
+
+
+```{r}
+hist(b$total_int, 10)
+my_mean <- mean(b$total_int)
+my_median <- median(b$total_int)
+```
+
+The mean is `r my_mean` and the median is `r my_median`.
 
 ## What is the average daily activity pattern?
 
-
+```{r}
+by_interval <- group_by(df, interval)
+my_mean <- summarize(by_interval, mean(steps, na.rm=T))
+colnames(my_mean) <- c("Interval", "Mean.Steps")
+plot(my_mean$Interval, my_mean$Mean.Steps, type="l", main="Average Daily Activity Pattern", xlab="Interval", ylab="Average Steps")
+```
 
 ## Imputing missing values
 
