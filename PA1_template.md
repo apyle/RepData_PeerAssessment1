@@ -110,7 +110,16 @@ int_mean <- mutate(int_mean, Step.Missing = round(Mean.Steps))
 
 ```r
 adj_interval <- merge(by_interval, int_mean, by.x = "interval", by.y = "Interval")
+adj_interval <- mutate(adj_interval, 
+                       imputted = ifelse(is.na(adj_interval$steps), 
+                                         adj_interval$Step.Missing, 
+                                         adj_interval$steps))
+adj_day <- group_by(adj_interval, date)
+adj_step_by_day <- summarize(adj_day, adj_steps = sum(imputted))
+hist(adj_step_by_day$adj_steps, 10)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
