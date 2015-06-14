@@ -1,6 +1,18 @@
 # Reproducible Research: Peer Assessment 1
 
 
+```r
+require(knitr)
+```
+
+```
+## Loading required package: knitr
+```
+
+```r
+opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figure/")
+```
+
 ## Loading and preprocessing the data
 
 Load the data downloaded from the GitHub repo
@@ -49,7 +61,7 @@ hist(day_step_by_int$total_int, 10, main="Histogram of Frequency of Daily Steps"
      xlab="Number of Daily Steps", ylab="Frequency")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+![](figure/unnamed-chunk-3-1.png) 
 
 ```r
 my_mean <- mean(day_step_by_int$total_int)
@@ -75,7 +87,7 @@ plot(int_mean$Interval, int_mean$Mean.Steps, type="l",
      main="Average Daily Activity Pattern", xlab="Interval", ylab="Average Steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![](figure/unnamed-chunk-4-1.png) 
 
 2. Which 5-minute interval, on average across all the days in the dataset, 
 contains the maximum number of steps?
@@ -119,7 +131,7 @@ adj_step_by_day <- summarize(adj_day, adj_steps = sum(imputted))
 hist(adj_step_by_day$adj_steps, 10)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+![](figure/unnamed-chunk-8-1.png) 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
