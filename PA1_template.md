@@ -1,4 +1,5 @@
 # Reproducible Research: Peer Assessment 1
+apyle@github.com  
 
 
 ```r
@@ -165,11 +166,46 @@ change.
 
 
 ```r
-adj_step_by_day <- mutate(adj_step_by_day, day_of_week = weekdays(as.Date(date)))
-adj_step_by_day <- mutate(adj_step_by_day, day_factor = ifelse(day_of_week == "Saturday" | day_of_week == "Sunday", "weekend", "weekday"))
-adj_step_by_day$day_factor <- as.factor(adj_step_by_day$day_factor)
+adj_step_by_interval <- mutate(adj_interval, day_of_week = weekdays(as.Date(date)))
+adj_step_by_interval <- mutate(adj_step_by_interval, day_factor = ifelse(day_of_week == "Saturday" | day_of_week == "Sunday", "weekend", "weekday"))
+adj_step_by_interval$day_factor <- as.factor(adj_step_by_interval$day_factor)
+adj_step_for_graph <- group_by(adj_step_by_interval, day_factor, interval)
+adj_step_for_graph <- summarize(adj_step_for_graph, final_steps = sum(imputted))
 ```
 
 ####Step 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
+
+```r
+library(ggplot2)
+
+g <- ggplot(adj_step_for_graph, aes(interval, final_steps)) + 
+        facet_grid(day_factor ~ .) +
+        geom_line() +
+        xlab("Interval") +
+        ylab("Weekday type") +
+        ggtitle("Differences in Steps Taken Based on Weekday v. Weekend")
+
+dev.set(2)
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+png(file="figure/part5_2.png", width=672)
+print(g)
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+![](figure/part5_2.png)
+
+As shown in the graphs above, the weekday activity starts sooner in the day then on the weekends. There is also more steps taken during the weekdays than on the weekends.
 
