@@ -163,6 +163,13 @@ change.
 
 ####Step 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
+
+```r
+adj_step_by_day <- mutate(adj_step_by_day, day_of_week = weekdays(as.Date(date)))
+adj_step_by_day <- mutate(adj_step_by_day, day_factor = ifelse(day_of_week == "Saturday" | day_of_week == "Sunday", "weekend", "weekday"))
+adj_step_by_day$day_factor <- as.factor(adj_step_by_day$day_factor)
+```
+
 ####Step 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
 

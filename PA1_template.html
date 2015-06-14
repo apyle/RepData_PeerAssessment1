@@ -168,6 +168,9 @@ diff_median = imputed_median - original_median</code></pre>
 <h3>Determine if the day of the week makes a difference in the number of steps in the imputed data</h3>
 <div id="step-1.-create-a-new-factor-variable-in-the-dataset-with-two-levels-weekday-and-weekend-indicating-whether-a-given-date-is-a-weekday-or-weekend-day." class="section level4">
 <h4>Step 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</h4>
+<pre class="r"><code>adj_step_by_day &lt;- mutate(adj_step_by_day, day_of_week = weekdays(as.Date(date)))
+adj_step_by_day &lt;- mutate(adj_step_by_day, day_factor = ifelse(day_of_week == &quot;Saturday&quot; | day_of_week == &quot;Sunday&quot;, &quot;weekend&quot;, &quot;weekday&quot;))
+adj_step_by_day$day_factor &lt;- as.factor(adj_step_by_day$day_factor)</code></pre>
 </div>
 <div id="step-2.-make-a-panel-plot-containing-a-time-series-plot-i.e.-type-l-of-the-5-minute-interval-x-axis-and-the-average-number-of-steps-taken-averaged-across-all-weekday-days-or-weekend-days-y-axis." class="section level4">
 <h4>Step 2. Make a panel plot containing a time series plot (i.e. <code>type = &quot;l&quot;</code>) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</h4>
