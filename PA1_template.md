@@ -1,6 +1,10 @@
 # Reproducible Research: Peer Assessment 1
 apyle@github.com  
 
+Look for improvement from https://github.com/Glabenweek/RepData_PeerAssessment1/blob/master/PA1_template.md
+and https://github.com/karthikr77/RepData_PeerAssessment1/blob/master/PA1_template.md
+and https://github.com/born2rununix/RepData_PeerAssessment1/blob/master/PA1_template.Rmd
+
 
 ```r
 require(knitr)
