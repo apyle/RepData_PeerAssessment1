@@ -1,20 +1,29 @@
 # Reproducible Research: Peer Assessment 1
 apyle@github.com  
+2015-09-13  
 
-Look for improvement from https://github.com/Glabenweek/RepData_PeerAssessment1/blob/master/PA1_template.md
-and https://github.com/karthikr77/RepData_PeerAssessment1/blob/master/PA1_template.md
-and https://github.com/born2rununix/RepData_PeerAssessment1/blob/master/PA1_template.Rmd
+Reproducible Research Project 1 Writeup
+=======================================
+
+## Introduction
+The first Peer Assessment project in the September, 2015 [Coursera][1] 
+[Reproducible Research Class][2] calls for an analysis of data gathered from a 
+personal fitness device measuring the wearer's steps in five-minute intervals 
+over the period of two months. Details about the assignment can be found in the 
+instructor's [github source repository][3].
+
+To begin, we will take care of some housekeeping items to make sure the knitr 
+library can properly generate this document. It needs to show all R code 
+executed for this analysis. We also want to reference the directory where 
+generated plots will be stored.
 
 
 ```r
-require(knitr)
-```
+# make sure we have access to the knitr library for setup and housekeeping
+suppressWarnings(library(knitr))
 
-```
-## Loading required package: knitr
-```
-
-```r
+# set knitr default option values, specifically echo, turning on the cache and
+# setting its location, and specifying the figure directory
 opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figure/")
 ```
 
@@ -26,7 +35,6 @@ opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figur
 
 ```r
 df <- read.csv("activity.csv", head=TRUE)
-#summary(df)
 ```
 
 ####Step 2. Process/transform the data into a suitable analytical format 
@@ -34,7 +42,6 @@ df <- read.csv("activity.csv", head=TRUE)
 ```r
 library(dplyr)
 by_day <- group_by(df, date)
-#day_step_by_int <- summarize(by_day, total_int = sum(steps, na.rm=T))
 ```
 
 ## What is mean total number of steps taken per day?
@@ -212,4 +219,17 @@ dev.off()
 ![](figure/part5_2.png)
 
 As shown in the graphs above, the weekday activity starts sooner in the day then on the weekends. There is also more steps taken during the weekdays than on the weekends.
+
+## Conclusion
+
+
+## Acknowlegements
+
+I improved my original response thanks to the anonymous reviewers of my June 2015 class. I also incorporated ideas from the following classmates in my peer assesment of their assignments: born2rununix, Glabenweek, and karthikr77.  
+  
+  
+[1]: https://www.coursera.org
+[2]: https://class.coursera.org/repdata-032
+[3]: https://github.com/rdpeng/RepData_PeerAssessment1
+
 
