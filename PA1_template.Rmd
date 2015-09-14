@@ -15,7 +15,8 @@ The first Peer Assessment project in the September, 2015 [Coursera][1]
 [Reproducible Research Class][2] calls for an analysis of data gathered from a 
 personal fitness device measuring the wearer's steps in five-minute intervals 
 over the period of two months. Details about the assignment can be found in the 
-instructor's [github source repository][3].
+instructor's [GitHub source repository][3]. It was completed using [RStudio][4] 
+and various R libraries and packages.
 
 To begin, we will take care of some housekeeping items to make sure the knitr 
 library can properly generate this document. It needs to show all R code 
@@ -23,7 +24,12 @@ executed for this analysis. We also want to reference the directory where
 generated plots will be stored.
 
 ```{r setoptions, echo=TRUE}
+# keep the chatter down so the write-up stays clean
+options(warn = -1)
+
 # make sure we have access to the knitr library for setup and housekeeping
+# suppressWarnings should not be necessary since we have used the warn option
+# but using it to reinforce the idea that we want to keep the write-up clean.
 suppressWarnings(library(knitr))
 
 # set knitr default option values, specifically echo, turning on the cache and
@@ -31,18 +37,35 @@ suppressWarnings(library(knitr))
 opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figure/")
 ```
 
-## Loading and preprocessing the data
+## The Data
 
-###Load the data downloaded from the GitHub repo
+As stated in the assignment, the data to be analyzed is orginates "from a 
+personal activity monitoring device. This device collects data at 5 minute 
+intervals through out the day. The data consists of two months of data from an 
+anonymous individual collected during the months of October and November, 2012
+and include the number of steps taken in 5 minute intervals each day."
 
-####Step 1. Load the data (i.e. `read.csv()`)
+The data is stored in a file, `activity.csv` which is included from the 
+assignment GitHub repo. With this in mind we'll load this file directly into R 
+rather than download it from GitHub. Then we'll transform it into a format to make it easier to analyze than its raw format.
+
 ```{r}
+#Load the data downloaded from the GitHub repo
+
+# The data is in the activity.csv file and contains 17,568 observations. Each 
+# observation includes:
+
+# steps: Number of steps taking in a 5-minute interval (missing values are coded as `NA`)
+# date: The date on which the measurement was taken in YYYY-MM-DD format
+# interval: Identifier for the 5-minute interval in which measurement was taken
+
+#Step 1. Load the data (i.e. `read.csv()`)
 df <- read.csv("activity.csv", head=TRUE)
-```
 
-####Step 2. Process/transform the data into a suitable analytical format 
-```{r}
-library(dplyr)
+#Step 2. Process/transform the data into a suitable analytical format 
+suppressWarnings(library(dplyr))
+
+# create a grouping for the data by date. We'll use this for summarizations
 by_day <- group_by(df, date)
 ```
 
@@ -199,12 +222,17 @@ As shown in the graphs above, the weekday activity starts sooner in the day then
 
 ## Acknowlegements
 
-I improved my original response thanks to the anonymous reviewers of my June 2015 class. I also incorporated ideas from the following classmates in my peer assesment of their assignments: born2rununix, Glabenweek, and karthikr77.  
+I originally wrote this for the June 2015 class. I improved it for the September 
+2015 class based on the feedback from my anonymous peer reviewers. I also 
+incorporated ideas from the following classmates after my peer assesment of their 
+assignments: born2rununix, Glabenweek, and karthikr77.  
   
   
 [1]: https://www.coursera.org
 [2]: https://class.coursera.org/repdata-032
 [3]: https://github.com/rdpeng/RepData_PeerAssessment1
+[4]: https://www.rstudio.com/
+
 
 ```{r echo = FALSE}
 
