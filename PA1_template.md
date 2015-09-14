@@ -2,6 +2,8 @@
 apyle@github.com  
 2015-09-13  
 
+<br />
+<hr />
 Reproducible Research Project 1 Writeup
 =======================================
 
@@ -33,6 +35,7 @@ suppressWarnings(library(knitr))
 opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figure/")
 ```
 
+<hr />
 ## The Data
 
 As stated in the assignment, the data to be analyzed is orginates "from a 
@@ -43,11 +46,12 @@ and include the number of steps taken in 5 minute intervals each day."
 
 The data is stored in a file, `activity.csv` which is included from the 
 assignment GitHub repo. With this in mind we'll load this file directly into R 
-rather than download it from GitHub. Then we'll transform it into a format to make it easier to analyze than its raw format.
+rather than download it from GitHub. Then we'll transform it into a format to 
+make it easier to analyze than its raw format.
 
 
 ```r
-#Load the data downloaded from the GitHub repo
+# Part 1: Load the data downloaded from the GitHub repo
 
 # The data is in the activity.csv file and contains 17,568 observations. Each 
 # observation includes:
@@ -66,49 +70,68 @@ suppressWarnings(library(dplyr))
 by_day <- group_by(df, date)
 ```
 
+<hr />
 ## What is mean total number of steps taken per day?
 
-###Analyze the data as it exists
+For the first part of the data analysis we will use the data as is, with several 
+unknown, or NA, values. We will ignore these values for now.
 
-####Step 1. Calculate the total number of steps taken per day 
+We are going to summarize the data by date and then create a histogram of the 
+total number of steps taken per day.
 
 
 ```r
+# Part 2: Analyze the data as it exists ignoring NA values
+
+# Step 1. Calculate the total number of steps taken per day 
 day_step_by_int <- summarize(by_day, total_int = sum(steps, na.rm=T))
-```
 
-####Step 2. Make a histogram of the total number of steps taken each day
-
-
-```r
+# Step 2. Make a histogram of the total number of steps taken each day
 hist(day_step_by_int$total_int, 10, main="Histogram of Frequency of Daily Steps", 
      xlab="Number of Daily Steps", ylab="Frequency")
 ```
 
 ![](figure/part2_2-1.png) 
 
+Now we'll calculate the mean and median of the total number of steps taken per day.
+
+
 ```r
-my_mean <- mean(day_step_by_int$total_int)
+# Step 3. Calculate and report the mean and median of the total number of steps taken per day
+my_mean <- round(mean(day_step_by_int$total_int), 0)
 my_median <- median(day_step_by_int$total_int)
 ```
 
-####Step 3. Calculate and report the mean and median of the total number of steps taken per day
+For the dataset where we are ignoring empty values, the mean is 9354 steps 
+taken per day and the median is 10395 steps taken per day.
 
-Response: The mean is 9354.2295082 and the median is 10395.
-
+<hr>
 ## What is the average daily activity pattern?
 
+Again, we are still analyzing the given data as it exists. We'll plot the five-minute intervals on a time series plot of the averabe number steps taken averaged across all days.
 ###Analyze the data as it exists
 
-####Step 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 
 ```r
+# Part 3: Analyze the average daily activity pattern
+
+# Step 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+# First, organize the data by the interval 
 by_interval <- group_by(df, interval)
+
+# and put that in a handy data structure with the mean and meaningful names
 int_mean <- summarize(by_interval, mean(steps, na.rm=T))
 colnames(int_mean) <- c("Interval", "Mean.Steps")
+
+# using the data we're also going to find which interval has the most steps
+max_interval <- int_mean$Interval[which.max(int_mean$Mean.Steps)]
+
+# Now we'll plot out the intervals and add a line for the most steps
 plot(int_mean$Interval, int_mean$Mean.Steps, type="l", 
      main="Average Daily Activity Pattern", xlab="Interval", ylab="Average Steps")
+abline(v = max_interval, col = "red", lty = "dashed")
 ```
 
 ![](figure/part3_1-1.png) 
@@ -118,6 +141,7 @@ plot(int_mean$Interval, int_mean$Mean.Steps, type="l",
 
 ```r
 max_interval <- int_mean$Interval[which.max(int_mean$Mean.Steps)]
+#abline(v = max_interval, col="red", lwd = 2)
 ```
 
 Response: The interval with the maximum average steps across the entire day is 835
