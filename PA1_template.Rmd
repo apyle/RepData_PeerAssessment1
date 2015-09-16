@@ -36,13 +36,13 @@ suppressWarnings(library(knitr))
 
 # set knitr default option values, specifically echo, turning on the cache and
 # setting its location, and specifying the figure directory
-opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figure/")
+opts_chunk$set(echo = TRUE, cache = TRUE, cache.path = "cache/", fig.path="figure/", message = FALSE)
 ```
 
 <hr />
 ## The Data
 
-As stated in the assignment, the data to be analyzed is orginates "from a 
+As stated in the assignment, the data to be analyzed is originates, "from a 
 personal activity monitoring device. This device collects data at 5 minute 
 intervals through out the day. The data consists of two months of data from an 
 anonymous individual collected during the months of October and November, 2012
@@ -63,10 +63,10 @@ make it easier to analyze than its raw format.
 # date: The date on which the measurement was taken in YYYY-MM-DD format
 # interval: Identifier for the 5-minute interval in which measurement was taken
 
-#Step 1. Load the data (i.e. `read.csv()`)
+# Step 1. Load the data (i.e. `read.csv()`)
 df <- read.csv("activity.csv", head=TRUE)
 
-#Step 2. Process/transform the data into a suitable analytical format 
+# Step 2. Process/transform the data into a suitable analytical format 
 suppressWarnings(library(dplyr))
 
 # create a grouping for the data by date. We'll use this for summarizations
@@ -77,7 +77,7 @@ by_day <- group_by(df, date)
 ## What is mean total number of steps taken per day?
 
 For the first part of the data analysis we will use the data as is, with several 
-unknown, or NA, values. We will ignore these values for now.
+unknown, or `NA`, values. We will ignore these values for now.
 
 We are going to summarize the data by date and then create a histogram of the 
 total number of steps taken per day.
@@ -98,6 +98,8 @@ Now we'll calculate the mean and median of the total number of steps taken per d
 
 ```{r}
 # Step 3. Calculate and report the mean and median of the total number of steps taken per day
+
+# round helps the data appear cleaner in the text below
 my_mean <- round(mean(day_step_by_int$total_int), 0)
 my_median <- median(day_step_by_int$total_int)
 ```
@@ -109,8 +111,8 @@ taken per day and the median is `r my_median` steps taken per day.
 ## What is the average daily activity pattern?
 
 Again, we are still analyzing the given data as it exists. We'll plot the 
-five-minute intervals on a time series plot of the averabe number steps taken 
-averaged across all days.
+five-minute intervals on a time series plot of the average number steps taken 
+across all days.
 
 
 ```{r part3_1}
@@ -147,7 +149,8 @@ Having analyzed the raw data, we will now impute missing values to keep these
 from skewing the results. 
 
 ```{r}
-#Step 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+# Step 1. Calculate and report the total number of missing values in the dataset 
+#         (i.e. the total number of rows with NAs)
 missing_values <- sum(is.na(by_day$steps))
 ```
 
@@ -155,16 +158,17 @@ First we'll calculate the total number of missing values in the dataset which is
 
 In order to get more meaninful results from our data we're going to impute data to 
 replace those missing values. The relatively unsophisticated strategy chosen to impute 
-the missing values is to calculate the mean of each 5-minute interval and subsititue 
-that for the `NA` values.
+the missing values is to calculate the mean of each 5-minute interval across the 
+entire data set and subsititue that for the `NA` values.
 
 ```{r}
-#Step 2. Devise a strategy for filling in all of the missing values in the dataset.
+# Step 2. Devise a strategy for filling in all of the missing values in the dataset.
 
 # Add the interval mean which we'll use to substitute for the NA values in the raw data
 int_mean <- mutate(int_mean, Step.Missing = round(Mean.Steps))
 
-#Step 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+# Step 3. Create a new dataset that is equal to the original dataset but with the 
+#         missing data filled in.
 
 # combine the original data organized by the interval with the mean data set.
 # TODO: ought to refactor the field names so that we don't have to specify interval
@@ -178,10 +182,11 @@ adj_interval <- mutate(adj_interval,
                                          adj_interval$steps))
 ```
 
-Having replaced the `NA` values with the mean of the interval, we'll analyze how this has impacted the results.
+Having replaced the `NA` values with the mean of the interval, we'll analyze how 
+this has impacted the results.
 
 ```{r part4_4a}
-#Step 4a. Make a histogram of the total number of steps taken each day.
+# Step 4a. Make a histogram of the total number of steps taken each day.
 
 # reorganize the data so we group it by date and not interval 
 adj_day <- group_by(adj_interval, date)
@@ -195,7 +200,9 @@ hist(adj_step_by_day$adj_steps, 10, main="Histogram of Frequency of Imputed Dail
 
 ```
 
-As the histogram shows, the number of low step days has decreased and we have results that resemble a normal distribution. We'll next want to analyze the imputed values impact.
+As the histogram shows, the number of low step days has decreased and we have 
+results that resemble a normal distribution. We'll next want to analyze the impact
+of substituting the interval mean for the missing `NA` values.
 
 
 ```{r}
@@ -211,7 +218,7 @@ original_median <- round(median(day_step_by_int$total_int), 0)
 imputed_mean <- round(mean(adj_step_by_day$adj_steps), 0)
 imputed_median <- round(median(adj_step_by_day$adj_steps), 0)
 
-# and find the difference
+# then compute the difference
 diff_mean = imputed_mean - original_mean
 diff_median = imputed_median - original_median
 
@@ -223,7 +230,7 @@ steps. This compares to the original values of `r format(original_mean, scientif
 and `r format(original_median, scientific = FALSE)` daily steps respectively.
 
 By introducing the imputed values the mean increased by `r diff_mean` steps and the median
-increased by `r diff_median` steps. By using the imputed values we reduced the number
+increased by `r diff_median` steps. Using the imputed values reduced the number
 of days that had very few steps taken and increased the number of days that
 represent the mean. The number of days in the historgram above the mean did not
 change.
@@ -231,24 +238,47 @@ change.
 <hr />
 ## Are there differences in activity patterns between weekdays and weekends?
 
-###Determine if the day of the week makes a difference in the number of steps in the imputed data
+The question arises, are there differences between the step pattern for a week 
+day vs. the weekend? To determine this we will create a factor variable for the 
+dataset and identify the week days from the weekend days. Using this factor, we 
+can then compare the two and see if there is a difference.
 
-####Step 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+We will use the imputed data for this analysis.
 
 ```{r part5_1}
-adj_step_by_interval <- mutate(adj_interval, day_of_week = weekdays(as.Date(date)))
-adj_step_by_interval <- mutate(adj_step_by_interval, day_factor = ifelse(day_of_week == "Saturday" | day_of_week == "Sunday", "weekend", "weekday"))
-adj_step_by_interval$day_factor <- as.factor(adj_step_by_interval$day_factor)
-adj_step_for_graph <- group_by(adj_step_by_interval, day_factor, interval)
-adj_step_for_graph <- summarize(adj_step_for_graph, final_steps = sum(imputted))
+#Determine if the day of the week makes a difference in the number of steps in the imputed data
 
+# Step 1. Create a new factor variable in the dataset with two levels – “weekday” 
+#         and “weekend” indicating whether a given date is a weekday or weekend day.
+
+# first identify the day of the week for each entry
+adj_step_by_interval <- mutate(adj_interval, day_of_week = weekdays(as.Date(date)))
+
+# now categorize as a week day or a weekend
+adj_step_by_interval <- mutate(adj_step_by_interval, 
+                               day_factor = ifelse(day_of_week == "Saturday" | day_of_week == "Sunday",
+                                                   "weekend", "weekday"))
+
+# and factorize it
+adj_step_by_interval$day_factor <- as.factor(adj_step_by_interval$day_factor)
 ```
 
-####Step 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
+Now that we have every day categorized as a week day or a weekend day, we'll plot 
+the step pattern of the imputed data so that we can visually compare the two patterns.
 
 ```{r part5_2}
-library(ggplot2)
+# Step 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of 
+#         the 5-minute interval (x-axis) and the average number of steps taken, 
+#         averaged across all weekday days or weekend days (y-axis). 
 
+# put the data into a handy data structure for reporting
+adj_step_for_graph <- group_by(adj_step_by_interval, day_factor, interval)
+adj_step_for_graph <- summarize(adj_step_for_graph, final_steps = sum(imputed))
+
+# we'll use the ggplot2 system to create and save the plot 
+suppressWarnings(library(ggplot2))
+
+# Create the graph with weekday above weekend 
 g <- ggplot(adj_step_for_graph, aes(interval, final_steps)) + 
         facet_grid(day_factor ~ .) +
         geom_line() +
@@ -256,6 +286,9 @@ g <- ggplot(adj_step_for_graph, aes(interval, final_steps)) +
         ylab("Weekday type") +
         ggtitle("Differences in Steps Taken Based on Weekday v. Weekend")
 
+# print the plot to a file and we'll reference it below
+# TODO: Figure out how to keep dev.set() from spitting out extra output that 
+#       distracts rather than helps
 dev.set(2)
 png(file="figure/part5_2.png", width=672)
 print(g)
@@ -265,10 +298,19 @@ dev.off()
 
 ![](figure/part5_2.png)
 
-As shown in the graphs above, the weekday activity starts sooner in the day then on the weekends. There is also more steps taken during the weekdays than on the weekends.
+As shown in the graphs above, the weekday activity starts sooner in the day then 
+on the weekends. There is also more steps taken on the weekdays than on the 
+weekends.
 
 ## Conclusion
 
+This exercise has demonstrated how we can take raw data and analyze it in a way 
+that aids our understanding of the fitness device wearer's movements. We've 
+observed how they typically move about during the day and how the distiction 
+between week day and weekend day makes a significant difference in the pattern. 
+Finally, and most importantly, we demonstrated how we can impute missing data 
+values from the data that we have to improve our understanding of the entire 
+data set.
 
 ## Acknowlegements
 
